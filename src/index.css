@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --color-gold: #C8A45C;
+  --color-gold-light: #E8CC8A;
+  --color-gold-dark: #A8883B;
+  --color-bg: #F5F4F0;
+  --color-bg-card: #FFFFFF;
+  --color-text-primary: #1C1C1E;
+  --color-text-secondary: #6E6E73;
+  --color-text-tertiary: #A1A1A6;
+  --color-border-light: rgba(0, 0, 0, 0.06);
+  --color-border-med: rgba(0, 0, 0, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body, #root {
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { position: relative; z-index: 1; }
+main { overflow-x: hidden; width: 100%; max-width: 100%; }
+
+.surface-hover {
+  transition: all 0.3s;
+}
+.surface-hover:hover {
+  background: rgba(0,0,0,0.015);
+}
+
+/* Spin button glow ring */
+.spin-button-glow {
+  position: relative;
+}
+.spin-button-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(200,164,92,0.3), rgba(200,164,92,0.08), rgba(200,164,92,0.3));
+  z-index: -1;
+  animation: spinGlow 3s ease-in-out infinite;
+}
+
+@keyframes spinGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes wheelEntry {
+  from { opacity: 0; transform: scale(0.85) rotate(-15deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.animate-wheel-entry {
+  animation: wheelEntry 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(200, 164, 92, 0.15); border-radius: 4px; }
+
+::selection {
+  background: rgba(200, 164, 92, 0.2);
+  color: #fff;
+}
