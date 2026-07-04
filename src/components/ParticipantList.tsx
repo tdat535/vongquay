@@ -8,58 +8,73 @@ interface Props {
 
 type FilterTab = 'pending' | 'all' | 'done'
 
-const PRIZE_BADGES: Record<string, { label: string; color: string; bg: string }> = {
-  special: { label: 'ĐB', color: '#D97706', bg: '#FEF3C7' },
-  voucher10: { label: 'V10', color: '#059669', bg: '#D1FAE5' },
-  voucher5: { label: 'V5', color: '#0284C7', bg: '#E0F2FE' },
+const BADGE: Record<string, { label: string; color: string; bg: string; border: string }> = {
+  special: { label: 'Đặc biệt', color: '#B45309', bg: '#FEF3C7', border: '#FDE68A' },
+  voucher10: { label: 'Voucher 10%', color: '#047857', bg: '#D1FAE5', border: '#A7F3D0' },
+  voucher5: { label: 'Voucher 5%', color: '#0369A1', bg: '#E0F2FE', border: '#BAE6FD' },
 }
 
-function Initials({ name, done }: { name: string; done: boolean }) {
-  const letters = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(w => w[0])
-    .join('')
-    .toUpperCase()
+function Row({ student, done, prizeType, mssv }: { student: string; done: boolean; prizeType?: string; mssv: string }) {
+  const initials = student.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase()
+  const badge = done && prizeType ? BADGE[prizeType] : null
 
   return (
-    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
-      done
-        ? 'bg-black/[0.03] text-[#A1A1A6]'
-        : 'bg-gold/10 text-gold'
-    }`}>
-      {letters}
+    <div
+      className={`flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all ${
+        done
+          ? 'opacity-45 border-black/[0.04] bg-black/[0.01]'
+          : 'border-black/[0.06] bg-white hover:border-black/[0.12] hover:shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)]'
+      }`}
+    >
+      <div
+        className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ring-1 ${
+          done ? 'bg-black/[0.03] text-[#A1A1A6] ring-black/[0.04]' : 'bg-gold/10 text-gold ring-gold/15'
+        }`}
+      >
+        {initials}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={`text-[15px] font-medium truncate leading-snug ${done ? 'text-[#A1A1A6]' : 'text-[#1C1C1E]'}`}>
+          {student}
+        </p>
+        <p className={`text-xs font-mono truncate mt-1 ${done ? 'text-[#A1A1A6]/50' : 'text-[#A1A1A6]'}`}>
+          {mssv || '—'}
+        </p>
+      </div>
+      {badge ? (
+        <span
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border shrink-0"
+          style={{ background: badge.bg, color: badge.color, borderColor: badge.border }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: badge.color }} />
+          {badge.label}
+        </span>
+      ) : done ? (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-black/[0.03] text-[#A1A1A6] shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-black/10" />
+          Đã quay
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gold/8 text-gold/70 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-gold/40 animate-pulse" />
+          Chờ
+        </span>
+      )}
     </div>
   )
 }
 
-function Pill({ done, prizeType }: { done: boolean; prizeType?: string }) {
-  if (done && prizeType && PRIZE_BADGES[prizeType]) {
-    const b = PRIZE_BADGES[prizeType]
-    return (
-      <span
-        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold"
-        style={{ background: b.bg, color: b.color }}
-      >
-        <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.color }} />
-        {b.label}
-      </span>
-    )
-  }
-  if (done) {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-black/[0.03] text-[#A1A1A6]">
-        <span className="w-1.5 h-1.5 rounded-full bg-black/10" />
-        Đã quay
-      </span>
-    )
+function StatChip({ value, label, tone }: { value: number; label: string; tone: 'neutral' | 'done' | 'pending' }) {
+  const toneMap = {
+    neutral: 'text-[#1C1C1E]',
+    done: 'text-emerald-600',
+    pending: 'text-gold',
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-gold/8 text-gold/60">
-      <span className="w-1.5 h-1.5 rounded-full bg-gold/40 animate-pulse" />
-      Chờ
-    </span>
+    <div className="flex-1 text-center py-5">
+      <p className={`text-3xl font-semibold tabular-nums ${toneMap[tone]}`}>{value}</p>
+      <p className="text-xs text-[#A1A1A6] mt-1 tracking-wide">{label}</p>
+    </div>
   )
 }
 
@@ -67,11 +82,14 @@ export default function ParticipantList({ refreshKey }: Props) {
   const [students, setStudents] = useState<Student[]>([])
   const [spins, setSpins] = useState<SpinRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<FilterTab>('pending')
+  const [listVisible, setListVisible] = useState(true)
 
-  const load = useCallback(async () => {
-    setLoading(true)
+  const load = useCallback(async (isManual = false) => {
+    if (isManual) setRefreshing(true)
+    else setLoading(true)
     const [stuRes, spinRes] = await Promise.all([
       supabase.from('students').select('*').order('full_name'),
       supabase.from('spins').select('*'),
@@ -79,6 +97,7 @@ export default function ParticipantList({ refreshKey }: Props) {
     if (stuRes.data) setStudents(stuRes.data)
     if (spinRes.data) setSpins(spinRes.data)
     setLoading(false)
+    setRefreshing(false)
   }, [])
 
   useEffect(() => { load() }, [refreshKey, load])
@@ -94,151 +113,159 @@ export default function ParticipantList({ refreshKey }: Props) {
     else if (filter === 'done') list = list.filter(s => spunSet.has(s.id))
     if (search.trim()) {
       const q = search.trim().toLowerCase()
-      list = list.filter(s =>
-        s.mssv.toLowerCase().includes(q) ||
-        s.full_name.toLowerCase().includes(q)
-      )
+      list = list.filter(s => s.mssv.toLowerCase().includes(q) || s.full_name.toLowerCase().includes(q))
     }
     return list
   }, [students, spunSet, filter, search])
 
   if (loading) {
     return (
-      <div className="py-24 text-center">
-        <div className="w-5 h-5 border-2 border-black/5 border-t-black/20 rounded-full animate-spin mx-auto" />
-      </div>
+      <section className="w-full px-6 py-28 md:py-36">
+        <div className="text-center">
+          <div className="w-5 h-5 border-2 border-black/5 border-t-black/20 rounded-full animate-spin mx-auto" />
+        </div>
+      </section>
     )
   }
 
+  const tabs: { key: FilterTab; label: string }[] = [
+    { key: 'pending', label: 'Chờ' },
+    { key: 'all', label: 'Tất cả' },
+    { key: 'done', label: 'Đã quay' },
+  ]
+
   return (
-    <section className="w-full px-6 py-28 md:py-36">
-      <div className="max-w-4xl mx-auto">
-        {/* Section header */}
-        <div className="mb-14 text-center">
-          <span className="inline-block text-[10px] font-medium tracking-[0.25em] text-[#A1A1A6] uppercase mb-3">
-            Tham dự
-          </span>
-          <h2 className="text-[#1C1C1E] text-3xl md:text-4xl font-light tracking-tight">
-            Sinh viên tham dự
-          </h2>
-          <div className="w-12 h-px bg-gold/40 mx-auto mt-5" />
+    <section className="w-full px-4 sm:px-8 lg:px-14 py-24 md:py-32">
+      {/* Header */}
+      <div className="mb-10 text-center">
+        <span className="text-xs font-medium tracking-[0.2em] text-[#A1A1A6] uppercase">Tham dự</span>
+        <h2 className="text-[#1C1C1E] text-3xl font-light tracking-tight mt-2">Danh sách tham dự</h2>
+        <div className="w-12 h-px bg-gold/40 mx-auto mt-4" />
+      </div>
+
+      {/* Stats strip */}
+      <div className="flex items-stretch rounded-xl border border-black/[0.04] divide-x divide-black/[0.04] mb-6 bg-black/[0.01]">
+        <StatChip value={total} label="Sinh viên" tone="neutral" />
+        <StatChip value={spun} label="Đã quay" tone="done" />
+        <StatChip value={pending} label="Còn lại" tone="pending" />
+      </div>
+
+      {/* Filters + search + toggle */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
+        <div className="inline-flex items-center p-1 rounded-full bg-black/[0.04] shrink-0 self-start">
+          {tabs.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                filter === key
+                  ? 'bg-white text-[#1C1C1E] shadow-sm'
+                  : 'text-[#A1A1A6] hover:text-[#6E6E73]'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Card */}
-        <div className="rounded-2xl bg-white border border-black/[0.06] overflow-hidden shadow-sm">
+        <div className="relative flex-1">
+          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A1A1A6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Tìm theo tên hoặc MSSV..."
+            className="w-full pl-10 pr-10 py-2.5 rounded-full bg-black/[0.03] border border-black/[0.06] text-sm text-[#1C1C1E] placeholder-[#A1A1A6] focus:outline-none focus:bg-white focus:border-black/[0.15] transition-all"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              aria-label="Xoá tìm kiếm"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-black/10 text-black/50 hover:bg-black/20 text-[11px]"
+            >
+              ✕
+            </button>
+          )}
+        </div>
 
-          {/* Toolbar */}
-          <div className="flex items-center gap-3 px-5 py-3 border-b border-black/[0.04]">
-            <div className="relative flex-1">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#A1A1A6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              </svg>
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Tìm theo tên hoặc MSSV..."
-                className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-black/[0.02] border border-black/[0.06] text-[#1C1C1E] text-sm placeholder-[#A1A1A6] focus:outline-none focus:border-black/[0.15] focus:bg-black/[0.03] transition-all"
-              />
-            </div>
-            <div className="flex gap-1 bg-black/[0.02] rounded-lg p-0.5 border border-black/[0.04]">
-              {(['pending', 'all', 'done'] as FilterTab[]).map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setFilter(t)}
-                  className={`px-3 py-1.5 rounded-[7px] text-xs font-medium transition-all ${
-                    filter === t
-                      ? 'bg-gold/12 text-gold shadow-sm'
-                      : 'text-[#A1A1A6] hover:text-[#6E6E73]'
-                  }`}
-                >
-                  {t === 'pending' ? 'Chờ' : t === 'done' ? 'Đã quay' : 'Tất cả'}
-                </button>
-              ))}
-            </div>
-          </div>
+        <button
+          onClick={() => setListVisible(v => !v)}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-black/[0.08] bg-white text-sm font-medium text-[#4A4A4E] hover:bg-black/[0.02] hover:border-black/[0.15] transition-all shrink-0"
+        >
+          <svg
+            className={`w-4 h-4 transition-transform duration-300 ${listVisible ? 'rotate-0' : '-rotate-90'}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+          {listVisible ? 'Ẩn danh sách' : 'Hiện danh sách'}
+        </button>
+      </div>
 
-          {/* Counter */}
-          <div className="flex items-center gap-4 px-5 py-2.5 border-b border-black/[0.02]">
-            <span className="text-xs text-[#A1A1A6]">
-              <span className="text-[#6E6E73] font-medium">{total}</span> tham dự
-            </span>
-            <span className="w-1 h-1 rounded-full bg-black/5" />
-            <span className="text-xs text-[#A1A1A6]">
-              <span className="text-emerald-600/60 font-medium">{spun}</span> đã quay
-            </span>
-            <span className="w-1 h-1 rounded-full bg-black/5" />
-            <span className="text-xs text-[#A1A1A6]">
-              <span className="text-gold/70 font-medium">{pending}</span> chờ
-            </span>
-          </div>
-
-          {/* Rows */}
+      {/* Collapsible list — dùng grid-rows trick để có animation mượt khi ẩn/hiện */}
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+        style={{ gridTemplateRows: listVisible ? '1fr' : '0fr' }}
+      >
+        <div className="overflow-hidden">
           {filtered.length === 0 ? (
             <div className="py-16 text-center">
               {total === 0 ? (
                 <>
+                  <p className="text-2xl mb-2">📋</p>
                   <p className="text-[#A1A1A6] text-sm">Chưa có dữ liệu</p>
-                  <p className="text-[#A1A1A6]/50 text-xs mt-1">Import dữ liệu từ menu cài đặt</p>
+                  <p className="text-[#A1A1A6]/50 text-xs mt-1">Import từ menu cài đặt</p>
+                </>
+              ) : filter === 'pending' ? (
+                <>
+                  <p className="text-2xl mb-2">🎉</p>
+                  <p className="text-[#A1A1A6] text-sm">Tất cả đã quay xong</p>
                 </>
               ) : (
-                <p className="text-[#A1A1A6] text-sm">
-                  {filter === 'pending' ? '🎉 Tất cả đã quay xong' : 'Không tìm thấy'}
-                </p>
+                <>
+                  <p className="text-2xl mb-2">🔍</p>
+                  <p className="text-[#A1A1A6] text-sm">Không tìm thấy kết quả</p>
+                </>
               )}
             </div>
           ) : (
-            <div className="divide-y divide-black/[0.02]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-1">
               {filtered.map(s => {
                 const done = spunSet.has(s.id)
                 const rec = spins.find(sp => sp.student_id === s.id)
-                return (
-                  <div
-                    key={s.id}
-                    className={`flex items-center gap-3 px-5 py-3 transition-all ${
-                      done ? 'opacity-35' : 'hover:bg-black/[0.01]'
-                    }`}
-                  >
-                    <Initials name={s.full_name} done={done} />
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium truncate leading-tight ${
-                        done ? 'text-[#A1A1A6]' : 'text-[#1C1C1E]'
-                      }`}>
-                        {s.full_name}
-                      </p>
-                      <p className={`text-[11px] font-mono truncate leading-tight mt-0.5 ${
-                        done ? 'text-[#A1A1A6]/50' : 'text-[#A1A1A6]'
-                      }`}>
-                        {s.mssv || '—'}
-                      </p>
-                    </div>
-                    <Pill done={done} prizeType={rec?.prize_type} />
-                  </div>
-                )
+                return <Row key={s.id} student={s.full_name} done={done} prizeType={rec?.prize_type} mssv={s.mssv} />
               })}
             </div>
           )}
-
-          {/* Footer */}
-          <div className="flex items-center justify-between px-5 py-3 border-t border-black/[0.04]">
-            <p className="text-[11px] text-[#A1A1A6]">
-              {filtered.length === total
-                ? `${total} sinh viên`
-                : `${filtered.length} / ${total}`}
-            </p>
-            <button
-              type="button"
-              onClick={load}
-              className="text-[11px] text-[#A1A1A6] hover:text-[#6E6E73] transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
-              </svg>
-              Làm mới
-            </button>
-          </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-6">
+        <p className="text-xs text-[#A1A1A6]">
+          {filtered.length === total ? `${total} sinh viên` : `${filtered.length} / ${total}`}
+        </p>
+        <button
+          onClick={() => load(true)}
+          disabled={refreshing}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-black/[0.08] bg-white text-xs font-medium text-[#4A4A4E] hover:bg-black/[0.02] hover:border-black/[0.15] transition-all disabled:opacity-50"
+        >
+          <svg
+            className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+          </svg>
+          Làm mới
+        </button>
       </div>
     </section>
   )
