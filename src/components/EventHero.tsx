@@ -23,9 +23,11 @@ export default function EventHero({ wheelRef, spinning, students, spun, onSpin, 
       {/* Top-left branding */}
       <div className="absolute top-8 left-8 right-8 flex items-start justify-between z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 flex items-center justify-center">
-            <span className="text-gold text-lg font-bold tracking-tight">V</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="Viễn Đông"
+            className="h-9 w-auto object-contain"
+          />
           <div className="leading-tight">
             <p className="text-[#1C1C1E] text-sm font-semibold tracking-tight">Vòng Quay May Mắn</p>
             <p className="text-[#6E6E73] text-[10px] font-medium tracking-[0.15em] uppercase">Cao Đẳng Viễn Đông</p>

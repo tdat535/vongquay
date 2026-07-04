@@ -228,11 +228,12 @@ const SpinWheel = forwardRef<SpinWheelHandle, Props>(({ onSpinEnd }, ref) => {
         className="w-[580px] h-[580px] max-w-[88vw] max-h-[88vw] drop-shadow-2xl"
       />
       {/* Center mark */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[84px] h-[84px] rounded-full bg-gradient-to-br from-[#1E2230] to-[#0B0E17] border-[2px] border-gold/40 flex items-center justify-center z-10 shadow-[0_0_32px_rgba(200,164,92,0.12)] pointer-events-none">
-        <div className="text-center leading-tight">
-          <div className="text-gold text-[11px] font-semibold tracking-[0.15em]">VIỄN</div>
-          <div className="text-gold text-[11px] font-semibold tracking-[0.15em]">ĐÔNG</div>
-        </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[84px] h-[84px] rounded-full bg-gradient-to-br from-[#1E2230] to-[#0B0E17] border-[2px] border-gold/40 flex items-center justify-center z-10 shadow-[0_0_32px_rgba(200,164,92,0.12)] pointer-events-none p-2.5">
+        <img
+          src="/logo.png"
+          alt="VIỄN ĐÔNG"
+          className="w-full h-full object-contain"
+        />
       </div>
     </div>
   )

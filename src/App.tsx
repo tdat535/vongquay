@@ -53,11 +53,11 @@ export default function App() {
             <div className="rounded-2xl p-6 border border-black/[0.08] bg-white shadow-xl">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                    </svg>
-                  </div>
+                  <img
+                    src="/logo.png"
+                    alt="Viễn Đông"
+                    className="h-8 w-auto object-contain"
+                  />
                   <div>
                     <h2 className="text-[#1C1C1E] text-sm font-semibold">Quản lý dữ liệu</h2>
                     <p className="text-[#A1A1A6] text-xs">Đồng bộ danh sách sinh viên</p>
